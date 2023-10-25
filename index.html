@@ -6,23 +6,56 @@
 <body>
     <p id="result"></p>
 
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js"
+    integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/1.0.21/jquery.csv.min.js"
+    integrity="sha512-Y8iWYJDo6HiTo5xtml1g4QqHtl/PO1w+dmUpQfQSOTqKNsMhExfyPN2ncNAe9JuJUSKzwK/b6oaNPop4MXzkwg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
     <script>
-        // Get the URL of the current page
-        var url = window.location.href;
 
-        // Create a URL object
-        const urldata = new URL(url);
+        const sheetId = "1qmcLIMEtMNXmLX9SNdsPqQqGRrZdMbGe6uTfxtQ7bJ4";
+        // sheetName is the name of the TAB in your spreadsheet (default is "Sheet1")
+        const sheetName = encodeURIComponent("all_data");
+        const sheetURL = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${sheetName}`;
 
-        // Get the value of the 'id' parameter
-        const idValue = urldata.searchParams.get("id");
+        let allData = []
 
- 
+        $.ajax({
+          type: "GET",
+          url: sheetURL,
+          dataType: "text",
+          success: function (response) {
+            // var data = $.csv.toArrays(response);
+            var data = $.csv.toObjects(response);
+            allData = data
+            console.log(data);
+            
+            var url = window.location.href;
+            const urldata = new URL(url);
+            const idValue = urldata.searchParams.get("id");
+            const resultElement = document.getElementById("result");
 
-        if (idValue) {
-            document.getElementById("result").textContent = "ID Parameter Value: " + idValue;
-        } else {
-            document.getElementById("result").textContent = "ID Parameter not found in the URL new new";
-        }
+            if (idValue) {
+                debugger
+                const user = allData.find(user => user.ID === idValue);
+
+                if (user) {
+                    resultElement.textContent = "User Data: " + JSON.stringify(user);
+                } else {
+                    resultElement.textContent = "User with ID " + idValue + " not found";
+                }
+            } else {
+                resultElement.textContent = "ID Parameter not found in the URL";
+            }
+          },
+        });
+
+
+
+
+        // https://docs.google.com/spreadsheets/d/1qmcLIMEtMNXmLX9SNdsPqQqGRrZdMbGe6uTfxtQ7bJ4/edit?usp=sharing
     </script>
+    
 </body>
 </html>
