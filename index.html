@@ -3,14 +3,23 @@
 <head>
     <title>Get ID Parameter from URL</title>
 </head>
-<body>
-    <p id="result"></p>
-
+<body style="background-color: #eee;">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="styles.css">
     <script src="https://code.jquery.com/jquery-3.6.3.min.js"
     integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/1.0.21/jquery.csv.min.js"
     integrity="sha512-Y8iWYJDo6HiTo5xtml1g4QqHtl/PO1w+dmUpQfQSOTqKNsMhExfyPN2ncNAe9JuJUSKzwK/b6oaNPop4MXzkwg=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    
+
+    <div class="page-wrapper">
+
+        <h1 style="padding-bottom: 40px; color: #213670;">14 Scieno Get - Together</h1>
+        <div id="success"></div>
+        <div id="not_in_system"></div>
+    </div>
 
     <script>
 
@@ -34,22 +43,51 @@
             var url = window.location.href;
             const urldata = new URL(url);
             const idValue = urldata.searchParams.get("id");
-            const resultElement = document.getElementById("result");
 
             if (idValue) {
-                debugger
                 const user = allData.find(user => user.ID === idValue);
 
                 if (user) {
-                    resultElement.textContent = "User Data: " + JSON.stringify(user);
+                    // resultElement.textContent = "User Data: " + JSON.stringify(user);
+                    document.getElementById("success").innerHTML = `
+                    <div class="custom-modal">
+                        <div class="succes succes-animation icon-top"><i class="fa fa-check"></i></div>
+                        <div class="succes border-bottom"></div>
+                        <div class="content">
+                        <p class="type">${user.NAME}</p>
+                        <p class="message-type">Succesfully Boocked</p>
+                        </div>
+                    </div>
+                    `
                 } else {
-                    resultElement.textContent = "User with ID " + idValue + " not found";
+                    // resultElement.textContent = "User with ID " + idValue + " not found";
+                    document.getElementById("not_in_system").innerHTML = `
+                    <div class="custom-modal">
+                        <div class="danger danger-animation icon-top"><i class="fa fa-times"></i></div>
+                        <div class="danger border-bottom"></div>
+                        <div class="content">
+                        <p class="type">Invalid ID</p>
+                        <p class="message-type">A Problem Occurred </p>
+                        </div>
+                    </div>
+                    `
                 }
             } else {
-                resultElement.textContent = "ID Parameter not found in the URL";
+                document.getElementById("not_in_system").innerHTML = `
+                <div class="custom-modal">
+                    <div class="danger danger-animation icon-top"><i class="fa fa-times"></i></div>
+                    <div class="danger border-bottom"></div>
+                    <div class="content">
+                    <p class="type">Cannot Find ID</p>
+                    <p class="message-type">A Problem Occurred </p>
+                    </div>
+                </div>
+                `
             }
           },
         });
+
+        
 
 
 
