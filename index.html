@@ -1,99 +1,209 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <title>Get ID Parameter from URL</title>
-</head>
-<body style="background-color: #eee;">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="styles.css">
-    <script src="https://code.jquery.com/jquery-3.6.3.min.js"
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="apple-touch-icon" sizes="76x76" href="assets/img/apple-icon.png">
+  <link rel="icon" type="image/png" href="assets/img/favicon.png">
+  <title>
+    14 Science get together
+  </title>
+  <!--     Fonts and icons     -->
+  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+  <!-- Nucleo Icons -->
+  <link href="assets/css/nucleo-icons.css" rel="stylesheet" />
+  <link href="assets/css/nucleo-svg.css" rel="stylesheet" />
+  <link href="newStyles.css" rel="stylesheet" />
+  <!-- Font Awesome Icons -->
+  <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+  <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  <!-- CSS Files -->
+  <link id="pagestyle" href="assets/css/material-dashboard.css?v=3.0.0" rel="stylesheet" />
+  <script src="https://code.jquery.com/jquery-3.6.3.min.js"
     integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/1.0.21/jquery.csv.min.js"
     integrity="sha512-Y8iWYJDo6HiTo5xtml1g4QqHtl/PO1w+dmUpQfQSOTqKNsMhExfyPN2ncNAe9JuJUSKzwK/b6oaNPop4MXzkwg=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
 
-    
-
-    <div class="page-wrapper">
-
-        <!-- <h1 style="padding-bottom: 40px; color: #213670;">14 Scieno Get - Together</h1> -->
-        <div id="success"></div>
-        <div id="not_in_system"></div>
+<body class="bg-gray-200">
+  <main class="main-content  mt-0">
+    <div class="page-header align-items-start min-vh-100" style="background-image: url('https://images.unsplash.com/photo-1497294815431-9365093b7331?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1950&q=80');">
+      <span class="mask bg-gradient-dark opacity-6"></span>
+      <div class="container my-auto" style="margin-top: 125px !important;">
+        <div class="row">
+          <div class="col-lg-4 col-md-8 col-12 mx-auto">
+            <div id="user_content" >
+              
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </main>
+  <script>
 
-    <script>
+    const sheetId = "1qmcLIMEtMNXmLX9SNdsPqQqGRrZdMbGe6uTfxtQ7bJ4";
+    // sheetName is the name of the TAB in your spreadsheet (default is "Sheet1")
+    const sheetName = encodeURIComponent("all_data");
+    const sheetURL = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${sheetName}`;
 
-        const sheetId = "1qmcLIMEtMNXmLX9SNdsPqQqGRrZdMbGe6uTfxtQ7bJ4";
-        // sheetName is the name of the TAB in your spreadsheet (default is "Sheet1")
-        const sheetName = encodeURIComponent("all_data");
-        const sheetURL = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${sheetName}`;
+    let allData = []
 
-        let allData = []
+    $.ajax({
+      type: "GET",
+      url: sheetURL,
+      dataType: "text",
+      success: function (response) {
+        // var data = $.csv.toArrays(response);
+        var data = $.csv.toObjects(response);
+        allData = data
+        console.log(data);
+        
+        var url = window.location.href;
+        const urldata = new URL(url);
+        const idValue = urldata.searchParams.get("id");
 
-        $.ajax({
-          type: "GET",
-          url: sheetURL,
-          dataType: "text",
-          success: function (response) {
-            // var data = $.csv.toArrays(response);
-            var data = $.csv.toObjects(response);
-            allData = data
-            console.log(data);
-            
-            var url = window.location.href;
-            const urldata = new URL(url);
-            const idValue = urldata.searchParams.get("id");
+        if (idValue) {
+            const user = allData.find(user => user.ID === idValue);
 
-            if (idValue) {
-                const user = allData.find(user => user.ID === idValue);
-
-                if (user) {
-                    // resultElement.textContent = "User Data: " + JSON.stringify(user);
-                    document.getElementById("success").innerHTML = `
-                    <div class="custom-modal">
-                        <div class="succes succes-animation icon-top"><i class="fa fa-check"></i></div>
-                        <div class="succes border-bottom"></div>
-                        <div class="content">
-                        <p class="type">${user.NAME}</p>
-                        <p class="message-type">Succesfully Boocked</p>
-                        </div>
+            if (user) {
+              if(user.payment_status === "PAID") {
+                document.getElementById("user_content").innerHTML = `
+                <div class="card z-index-0 fadeIn3 fadeInBottom">
+                  <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                    <div class="bg-gradient-success shadow-primary-black border-radius-lg py-3 pe-1">
+                      <h4 class="text-white font-weight-bolder text-center mb-0">${user.card}</h4>
                     </div>
-                    `
-                } else {
-                    // resultElement.textContent = "User with ID " + idValue + " not found";
-                    document.getElementById("not_in_system").innerHTML = `
-                    <div class="custom-modal">
-                        <div class="danger danger-animation icon-top"><i class="fa fa-times"></i></div>
-                        <div class="danger border-bottom"></div>
-                        <div class="content">
-                        <p class="type">Invalid ID</p>
-                        <p class="message-type">A Problem Occurred </p>
-                        </div>
+                  </div>
+                  <div class="card-body">
+                    <div class="card">
+                      <div class="card-body pt-0 p-3 text-center" >
+                        <h6 class="text-center mb-0" style="padding-top: 12px">${user.name}</h6>
+                        <span class="text-xs">${user.spouse_name === "NULL" ? "14 Science Get-together" : user.spouse_name}</span>
+                        <hr class="horizontal dark my-3">
+                        <h5 class="mb-0">${user.ticket_category}</h5>
+                      </div>
                     </div>
-                    `
-                }
+                    <div class="text-center">
+                      <button type="button" 
+                        style="font-size: 20px; padding: 0px !important; box-shadow: none !important; color: white;" 
+                        class="btn bg-gradient-success w-100 my-4 mb-2">
+                        ${user.payment_status}
+                        </button>
+                    </div>
+                  </div>
+                </div>
+                `
+              }
+              if(user.payment_status === "PENDING") {
+                document.getElementById("user_content").innerHTML = `
+                <div class="card z-index-0 fadeIn3 fadeInBottom">
+                  <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                    <div class="bg-gradient-pending shadow-primary-black border-radius-lg py-3 pe-1">
+                      <h4 class="text-white font-weight-bolder text-center mb-0">${user.card}</h4>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <div class="card">
+                      <div class="card-body pt-0 p-3 text-center" >
+                        <h6 class="text-center mb-0" style="padding-top: 12px">${user.name}</h6>
+                        <span class="text-xs">${user.spouse_name === "NULL" ? "14 Science Get-together" : user.spouse_name}</span>
+                        <hr class="horizontal dark my-3">
+                        <h5 class="mb-0">${user.ticket_category}</h5>
+                      </div>
+                    </div>
+                    <div class="text-center">
+                      <button type="button" 
+                        style="font-size: 20px; padding: 0px !important; box-shadow: none !important; color: white;" 
+                        class="btn bg-gradient-pending w-100 my-4 mb-2">
+                        ${user.payment_status}
+                        </button>
+                    </div>
+                  </div>
+                </div>
+                `
+              }
+                
             } else {
-                document.getElementById("not_in_system").innerHTML = `
-                <div class="custom-modal">
-                    <div class="danger danger-animation icon-top"><i class="fa fa-times"></i></div>
-                    <div class="danger border-bottom"></div>
-                    <div class="content">
-                    <p class="type">Cannot Find ID</p>
-                    <p class="message-type">A Problem Occurred </p>
+                document.getElementById("user_content").innerHTML = `
+                <div class="card z-index-0 fadeIn3 fadeInBottom">
+                  <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                    <div class="bg-gradient-error shadow-primary-black border-radius-lg py-3 pe-1">
+                      <h4 class="text-white font-weight-bolder text-center mb-0">මූ සිස්ටම් එකේ නෑ</h4>
                     </div>
+                  </div>
+                  <div class="card-body">
+                    <div class="card">
+                      <div class="card-body pt-0 p-3 text-center" >
+                        <h6 class="text-center mb-0" style="padding-top: 12px">Name not found</h6>
+                        <span class="text-xs">14 Science Get-together</span>
+                        <hr class="horizontal dark my-3">
+                        <h5 class="mb-0">Link එක හරියට බලල ආයෙ Try කරපං</h5>
+                      </div>
+                    </div>
+                    <div class="text-center">
+                      <button type="button" 
+                        style="font-size: 20px; padding: 0px !important; box-shadow: none !important; color: white;" 
+                        class="btn bg-gradient-error w-100 my-4 mb-2">
+                          CALL DODAMA
+                        </button>
+                    </div>
+                  </div>
                 </div>
                 `
             }
-          },
-        });
-
-        
-
-
-
-
-        // https://docs.google.com/spreadsheets/d/1qmcLIMEtMNXmLX9SNdsPqQqGRrZdMbGe6uTfxtQ7bJ4/edit?usp=sharing
-    </script>
-    
+        } else {
+          document.getElementById("user_content").innerHTML = `
+          <div class="card z-index-0 fadeIn3 fadeInBottom">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+              <div class="bg-gradient-error shadow-primary-black border-radius-lg py-3 pe-1">
+                <h4 class="text-white font-weight-bolder text-center mb-0">Link එකේ ID Param එක Missing</h4>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="card">
+                <div class="card-body pt-0 p-3 text-center" >
+                  <h6 class="text-center mb-0" style="padding-top: 12px">Name not found</h6>
+                  <span class="text-xs">14 Science Get-together</span>
+                  <hr class="horizontal dark my-3">
+                  <h5 class="mb-0">Link එක හරියට බලල ආයෙ Try කරපං</h5>
+                </div>
+              </div>
+              <div class="text-center">
+                <button type="button" 
+                  style="font-size: 20px; padding: 0px !important; box-shadow: none !important; color: white;" 
+                  class="btn bg-gradient-error w-100 my-4 mb-2">
+                    CALL DODAMA
+                  </button>
+              </div>
+            </div>
+          </div>
+                `
+        }
+      },
+    });
+</script>
+  <!--   Core JS Files   -->
+  <script src="assets/js/core/popper.min.js"></script>
+  <script src="assets/js/core/bootstrap.min.js"></script>
+  <script src="assets/js/plugins/perfect-scrollbar.min.js"></script>
+  <script src="assets/js/plugins/smooth-scrollbar.min.js"></script>
+  <script>
+    var win = navigator.platform.indexOf('Win') > -1;
+    if (win && document.querySelector('#sidenav-scrollbar')) {
+      var options = {
+        damping: '0.5'
+      }
+      Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+    }
+  </script>
+  <!-- Github buttons -->
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+  <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
+  <script src="assets/js/material-dashboard.min.js?v=3.0.0"></script>
 </body>
+
 </html>
