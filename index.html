@@ -116,11 +116,20 @@
                       </div>
                     </div>
                     <div class="text-center">
-                      <button type="button" 
-                        style="font-size: 20px; padding: 0px !important; box-shadow: none !important; color: white;" 
-                        class="btn bg-gradient-pending w-100 my-4 mb-2">
-                        ${user.payment_status}
+                      ${user.remaining_balance === "NULL" ? `
+                        <button type="button" 
+                          style="font-size: 20px; padding: 0px !important; box-shadow: none !important; color: white;" 
+                          class="btn bg-gradient-pending w-100 my-4 mb-2">
+                          ${user.payment_status}
                         </button>
+                      ` : `
+                        <button type="button" 
+                          style="font-size: 20px; padding: 0px !important; box-shadow: none !important; color: white;" 
+                          class="btn bg-gradient-pending w-100 my-4 mb-2">
+                          ${'Balance: '+user.remaining_balance}
+                        </button>
+                      `}
+                      
                     </div>
                   </div>
                 </div>
